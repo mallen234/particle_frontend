@@ -1,0 +1,19 @@
+{
+  "name": "solar",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^4.2.0"
+  },
+  "dependencies": {
+    "mongodb": "^5.3.0",
+    "three": "^0.151.3",
+    "webgl": "^0.0.7"
+  }
+}

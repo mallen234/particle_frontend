@@ -11,7 +11,7 @@ const sizes = {
   height: window.innerHeight,
 };
 
-const { scene, mesh, light } = createScene();
+const { scene, sun, earth, mars, light } = createScene();
 const camera = createCamera(sizes);
 const canvas = document.querySelector(".webgl");
 const renderer = createRenderer(canvas, sizes, scene, camera);
@@ -25,10 +25,56 @@ window.addEventListener("resize", () => {
   renderer.setSize(sizes.width, sizes.height);
 });
 
-const loop = () => {
-  controls.update();
-  renderer.render(scene, camera);
-  window.requestAnimationFrame(loop);
-}
+// const loop = () => {
+//   controls.update();
+//   renderer.render(scene, camera);
+//   window.requestAnimationFrame(loop);
+// }
+let time = 0;
 
-loop();
+
+fetch('src/data/data.json')
+  .then(response => {
+    console.log('made it here')
+    if (!response.ok) {
+      console.log('made it here 2')
+      throw new Error(`Fetch error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
+  })
+  .then(d => {
+    // Process the JSON data here
+    const data1 = d;
+    console.log(data1[0].planets[0]['Sun'].x,data1[0].planets[0]['Sun'].y,data1[0].planets[0]['Sun'].z);
+    console.log(data1.length)
+
+    sun.position.set(data1[0].planets[0]['Sun'].x,data1[0].planets[0]['Sun'].y,data1[0].planets[0]['Sun'].z);
+    earth.position.set(data1[0].planets[0]['Earth'].x,data1[0].planets[0]['Earth'].y,data1[0].planets[0]['Earth'].z);
+    mars.position.set(data1[0].planets[0]['Mars'].x,data1[0].planets[0]['Mars'].y,data1[0].planets[0]['Mars'].z);
+
+    const loop = () => {
+      // controls.update();
+    
+      if (time < data1.length){
+      
+        sun.position.set(data1[time].planets[0]['Sun'].x,data1[time].planets[0]['Sun'].y,data1[time].planets[0]['Sun'].z);
+        earth.position.set(data1[time].planets[0]['Earth'].x,data1[time].planets[0]['Earth'].y,data1[time].planets[0]['Earth'].z);
+        mars.position.set(data1[time].planets[0]['Mars'].x,data1[time].planets[0]['Mars'].y,data1[time].planets[0]['Mars'].z);
+        
+        // console.log(sun.position,earth.position,mars.position);
+      }
+      
+
+      controls.update();
+      renderer.render(scene, camera);
+      window.requestAnimationFrame(loop);
+    
+      time +=1;
+    }
+    loop()
+
+  })
+  .catch(error => {
+    // Handle any errors that occurred during the fetch
+    console.log(error)
+  });
